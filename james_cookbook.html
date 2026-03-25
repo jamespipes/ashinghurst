@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>James' Cookbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Lora:ital,wght@0,400;0,500;1,400&family=IM+Fell+English+SC&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --parchment: #f5ead6;
+    --parchment-dark: #e8d5b0;
+    --ink: #2c1a0e;
+    --ink-mid: #4a2e1a;
+    --rust: #8b3a1e;
+    --gold: #b8862a;
+    --gold-light: #d4a84b;
+    --cream: #fdf6e3;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--parchment-dark);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noise)' opacity='0.06'/%3E%3C/svg%3E");
+    font-family: 'Lora', Georgia, serif;
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ─── COVER ─── */
+  .cover {
+    background: var(--ink);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='1.5' fill='%23b8862a' opacity='0.25'/%3E%3Ccircle cx='0' cy='0' r='1' fill='%23b8862a' opacity='0.15'/%3E%3Ccircle cx='60' cy='60' r='1' fill='%23b8862a' opacity='0.15'/%3E%3C/svg%3E");
+    color: var(--parchment);
+    text-align: center;
+    padding: 80px 40px 70px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 20px;
+    border: 2px solid var(--gold);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    inset: 26px;
+    border: 1px solid var(--gold);
+    opacity: 0.25;
+    pointer-events: none;
+  }
+  .cover-ornament {
+    font-size: 26px;
+    color: var(--gold);
+    letter-spacing: 12px;
+    display: block;
+    margin-bottom: 28px;
+    opacity: 0.8;
+  }
+  .cover-james {
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 700;
+    font-size: clamp(36px, 6.5vw, 68px);
+    color: var(--gold-light);
+    line-height: 1;
+    letter-spacing: 2px;
+    display: block;
+  }
+  .cover-cookbook {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 900;
+    color: var(--parchment);
+    line-height: 1;
+    display: block;
+    margin-top: 10px;
+  }
+  .cover-divider {
+    width: 120px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+    margin: 28px auto 0;
+  }
+
+  /* ─── MAIN LAYOUT ─── */
+  .cookbook {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  /* ─── RECIPE CARD ─── */
+  .recipe {
+    margin-top: 14px;
+    background: var(--cream);
+    border: 1px solid var(--parchment-dark);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .recipe-header {
+    background: var(--ink);
+    padding: 20px 44px 18px;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    transition: background 0.2s;
+  }
+  .recipe-header:hover { background: #3d2510; }
+  .recipe-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--rust), var(--gold), var(--rust));
+  }
+
+  .recipe-header-left { flex: 1; }
+
+  .recipe-number {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--gold);
+    opacity: 0.7;
+    margin-bottom: 3px;
+    display: block;
+  }
+  .recipe h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(20px, 3vw, 30px);
+    font-weight: 700;
+    color: var(--parchment);
+    line-height: 1.1;
+  }
+  .recipe-note {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--gold-light);
+    margin-top: 5px;
+    opacity: 0.9;
+  }
+
+  /* Chevron */
+  .recipe-chevron {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border: 1px solid rgba(184,134,42,0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.35s ease, border-color 0.2s;
+  }
+  .recipe-chevron svg {
+    width: 14px;
+    height: 14px;
+    stroke: var(--gold);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .recipe.open .recipe-chevron {
+    transform: rotate(180deg);
+    border-color: var(--gold);
+  }
+
+  /* Accordion */
+  .recipe-body-wrap {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.38s ease;
+  }
+  .recipe.open .recipe-body-wrap {
+    grid-template-rows: 1fr;
+  }
+  .recipe-body-inner { overflow: hidden; }
+
+  /* Content grid */
+  .recipe-body {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+  }
+  .recipe-body.single { grid-template-columns: 1fr; }
+
+  @media (max-width: 620px) {
+    .recipe-body { grid-template-columns: 1fr; }
+    .recipe-header { padding: 16px 20px 14px; }
+  }
+
+  .ingredients-col {
+    padding: 28px 24px 28px 44px;
+    border-right: 1px solid var(--parchment-dark);
+    background: var(--parchment);
+  }
+  .instructions-col {
+    padding: 28px 44px 28px 28px;
+  }
+  .recipe-body.single .ingredients-col {
+    border-right: none;
+    border-bottom: 1px solid var(--parchment-dark);
+    padding: 28px 44px;
+  }
+  .recipe-body.single .instructions-col {
+    padding: 28px 44px;
+  }
+
+  .col-label {
+    font-family: 'IM Fell English SC', serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .col-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--parchment-dark);
+  }
+
+  ul.ing-list { list-style: none; padding: 0; }
+  ul.ing-list li {
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 5px 0;
+    border-bottom: 1px dotted var(--parchment-dark);
+    color: var(--ink-mid);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  ul.ing-list li::before {
+    content: '·';
+    color: var(--gold);
+    font-size: 18px;
+    line-height: 1.2;
+    flex-shrink: 0;
+  }
+
+  ol.steps { padding: 0; list-style: none; counter-reset: steps; }
+  ol.steps li {
+    counter-increment: steps;
+    font-size: 14.5px;
+    line-height: 1.75;
+    color: var(--ink-mid);
+    padding: 8px 0 8px 38px;
+    border-bottom: 1px solid var(--parchment-dark);
+    position: relative;
+  }
+  ol.steps li:last-child { border-bottom: none; }
+  ol.steps li::before {
+    content: counter(steps);
+    position: absolute;
+    left: 0; top: 10px;
+    width: 24px; height: 24px;
+    background: var(--rust);
+    color: var(--parchment);
+    font-family: 'Playfair Display', serif;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  .recipe-notes {
+    background: var(--parchment);
+    border-top: 1px solid var(--parchment-dark);
+    padding: 18px 44px;
+    font-style: italic;
+    font-size: 13.5px;
+    color: var(--ink-mid);
+    line-height: 1.7;
+  }
+  .recipe-notes strong { color: var(--rust); font-style: normal; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    text-align: center;
+    padding: 48px 20px;
+    font-family: 'IM Fell English SC', serif;
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: var(--ink-mid);
+    opacity: 0.5;
+  }
+  .footer-ornament {
+    font-size: 22px;
+    display: block;
+    margin-bottom: 10px;
+    color: var(--gold);
+    opacity: 0.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <span class="cover-ornament">✦ ✦ ✦</span>
+  <span class="cover-james">James'</span>
+  <span class="cover-cookbook">Cookbook</span>
+  <div class="cover-divider"></div>
+</div>
+
+<div class="cookbook">
+
+  <!-- 01 -->
+  <div class="recipe" id="blueberry-compote">
+    <div class="recipe-header" onclick="toggleRecipe(this)">
+      <div class="recipe-header-left">
+        <span class="recipe-number">No. 01</span>
+        <h2>Blueberry Compote</h2>
+      </div>
+      <div class="recipe-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="recipe-body-wrap"><div class="recipe-body-inner">
+      <div class="recipe-body">
+        <div class="ingredients-col">
+          <p class="col-label">Ingredients</p>
+          <ul class="ing-list">
+            <li>5 pints blueberries</li>
+            <li>1 cup brown sugar</li>
+            <li>5 tsp lemon juice</li>
+            <li>10 Tbsp water</li>
+            <li>2½ tsp vanilla</li>
+            <li>5 tsp ginger</li>
+            <li>2 tsp cinnamon</li>
+          </ul>
+        </div>
+        <div class="instructions-col">
+          <p class="col-label">Method</p>
+          <ol class="steps">
+            <li>Add all ingredients to a pot.</li>
+            <li>Simmer until the blueberries break down and the mixture thickens to desired consistency.</li>
+          </ol>
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- 02 -->
+  <div class="recipe" id="teriyaki-sauce">
+    <div class="recipe-header" onclick="toggleRecipe(this)">
+      <div class="recipe-header-left">
+        <span class="recipe-number">No. 02</span>
+        <h2>Teriyaki Sauce</h2>
+        <p class="recipe-note">Large Batch</p>
+      </div>
+      <div class="recipe-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="recipe-body-wrap"><div class="recipe-body-inner">
+      <div class="recipe-body">
+        <div class="ingredients-col">
+          <p class="col-label">Ingredients</p>
+          <ul class="ing-list">
+            <li>6 cups soy sauce</li>
+            <li>32 oz brown sugar (~4.25 cups packed)</li>
+            <li>22–24 cloves garlic (~8 Tbsp minced)</li>
+            <li>7 Tbsp fresh grated ginger</li>
+            <li>12 cups water</li>
+            <li>1⅓ cups cornstarch</li>
+          </ul>
+        </div>
+        <div class="instructions-col">
+          <p class="col-label">Method</p>
+          <ol class="steps">
+            <li>Combine soy sauce, brown sugar, garlic, ginger, and water in a large pot.</li>
+            <li>Bring to a gentle simmer.</li>
+            <li>Mix cornstarch with a little cold water to make a slurry.</li>
+            <li>Slowly whisk slurry into simmering sauce until thickened.</li>
+            <li>Cool before storing.</li>
+          </ol>
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- 03 -->
+  <div class="recipe" id="tuna-salad">
+    <div class="recipe-header" onclick="toggleRecipe(this)">
+      <div class="recipe-header-left">
+        <span class="recipe-number">No. 03</span>
+        <h2>Classic Tuna Salad</h2>
+        <p class="recipe-note">Yield: ~10–12 quarts · 50–65 sandwiches</p>
+      </div>
+      <div class="recipe-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="recipe-body-wrap"><div class="recipe-body-inner">
+      <div class="recipe-body">
+        <div class="ingredients-col">
+          <p class="col-label">Ingredients</p>
+          <ul class="ing-list">
+            <li>8 lb 5 oz (133 oz) tuna</li>
+            <li>8 cups mayo (start with 7, adjust)</li>
+            <li>4 cups diced celery</li>
+            <li>2 cups diced red onion</li>
+            <li>½ cup sweet relish (optional)</li>
+            <li>3–4 Tbsp salt</li>
+            <li>2 Tbsp black pepper</li>
+            <li>½ cup lemon juice</li>
+          </ul>
+        </div>
+        <div class="instructions-col">
+          <p class="col-label">Method</p>
+          <ol class="steps">
+            <li>Drain tuna very well.</li>
+            <li>Combine tuna, celery, onion, and relish (if using).</li>
+            <li>Fold in mayo gradually, starting with 7 cups.</li>
+            <li>Add lemon juice, salt, and pepper.</li>
+            <li>Mix thoroughly and adjust seasoning.</li>
+            <li>Chill at least 2 hours before serving.</li>
+          </ol>
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- 04 -->
+  <div class="recipe" id="aioli">
+    <div class="recipe-header" onclick="toggleRecipe(this)">
+      <div class="recipe-header-left">
+        <span class="recipe-number">No. 04</span>
+        <h2>Aioli</h2>
+        <p class="recipe-note">Large Batch — Scalable Base</p>
+      </div>
+      <div class="recipe-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="recipe-body-wrap"><div class="recipe-body-inner">
+      <div class="recipe-body">
+        <div class="ingredients-col">
+          <p class="col-label">Ingredients</p>
+          <ul class="ing-list">
+            <li>6 cups mayo</li>
+            <li>24 cloves garlic, minced</li>
+            <li>½ cup lemon juice</li>
+            <li>6 tsp salt</li>
+            <li>4 tsp black pepper</li>
+          </ul>
+        </div>
+        <div class="instructions-col">
+          <p class="col-label">Method</p>
+          <ol class="steps">
+            <li>Mince garlic very fine, or paste it for a smoother texture.</li>
+            <li>Combine all ingredients in a large bowl.</li>
+            <li>Mix thoroughly until fully incorporated.</li>
+            <li>Chill at least 1–2 hours before serving to let flavors develop.</li>
+          </ol>
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- 05 -->
+  <div class="recipe" id="po-boy-sauce">
+    <div class="recipe-header" onclick="toggleRecipe(this)">
+      <div class="recipe-header-left">
+        <span class="recipe-number">No. 05</span>
+        <h2>Po Boy Sauce</h2>
+      </div>
+      <div class="recipe-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="recipe-body-wrap"><div class="recipe-body-inner">
+      <div class="recipe-body single">
+        <div class="ingredients-col">
+          <p class="col-label">Ingredients</p>
+          <ul class="ing-list" style="columns:2;gap:24px;">
+            <li>4 cups mayo</li>
+            <li>½ cup relish</li>
+            <li>¼ cup lemon juice</li>
+            <li>2¾ Tbsp hot sauce</li>
+            <li>2¾ Tbsp capers</li>
+            <li>⅛ cup paprika</li>
+            <li>1⅜ Tbsp Dijon mustard</li>
+            <li>1⅜ Tbsp Worcestershire sauce</li>
+            <li>8 cloves garlic</li>
+            <li>1 Tbsp Creole seasoning</li>
+          </ul>
+        </div>
+        <div class="instructions-col">
+          <p class="col-label">Method</p>
+          <ol class="steps">
+            <li>Combine all ingredients in a large bowl and mix until fully incorporated.</li>
+            <li>Chill before serving.</li>
+          </ol>
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- 06 -->
+  <div class="recipe" id="roasted-squash">
+    <div class="recipe-header" onclick="toggleRecipe(this)">
+      <div class="recipe-header-left">
+        <span class="recipe-number">No. 06</span>
+        <h2>Roasted Butternut Squash</h2>
+        <p class="recipe-note">Italian-inspired seasoning · Serves 25</p>
+      </div>
+      <div class="recipe-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="recipe-body-wrap"><div class="recipe-body-inner">
+      <div class="recipe-body">
+        <div class="ingredients-col">
+          <p class="col-label">Ingredients</p>
+          <ul class="ing-list">
+            <li>10 lbs butternut squash, diced</li>
+            <li>1 cup (240ml) olive oil</li>
+            <li>2½ Tbsp salt</li>
+            <li>1½ Tbsp black pepper</li>
+            <li>2 Tbsp dried rosemary</li>
+            <li>1 tsp nutmeg</li>
+          </ul>
+        </div>
+        <div class="instructions-col">
+          <p class="col-label">Method</p>
+          <ol class="steps">
+            <li>Preheat oven to 400°F (200°C).</li>
+            <li>Toss diced squash with olive oil until evenly coated.</li>
+            <li>Add salt, pepper, rosemary, and nutmeg. Toss until well distributed.</li>
+            <li>Spread in a single layer across 4–5 sheet pans. Do not crowd.</li>
+            <li>Roast 25–30 minutes, flipping halfway, until edges are golden and caramelized.</li>
+            <li>Taste and adjust seasoning before serving.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="recipe-notes">
+        <strong>Notes:</strong> Fresh rosemary: double to ~4 Tbsp if substituting fresh for dried. Nutmeg is intentionally light — add more after tasting the first pan. Toss in batches if your bowl isn't large enough.
+      </div>
+    </div></div>
+  </div>
+
+  <!-- 07 -->
+  <div class="recipe" id="succotash">
+    <div class="recipe-header" onclick="toggleRecipe(this)">
+      <div class="recipe-header-left">
+        <span class="recipe-number">No. 07</span>
+        <h2>Succotash</h2>
+      </div>
+      <div class="recipe-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="recipe-body-wrap"><div class="recipe-body-inner">
+      <div class="recipe-body">
+        <div class="ingredients-col">
+          <p class="col-label">Ingredients</p>
+          <ul class="ing-list">
+            <li>4 pints cherry tomatoes</li>
+            <li>40 oz corn kernels</li>
+            <li>40 oz baby lima beans</li>
+            <li>4 Tbsp butter</li>
+            <li>2–2½ tsp salt</li>
+            <li>1 tsp black pepper</li>
+            <li>1½ tsp smoked paprika</li>
+            <li>1½ tsp garlic powder</li>
+          </ul>
+        </div>
+        <div class="instructions-col">
+          <p class="col-label">Method</p>
+          <ol class="steps">
+            <li>Melt butter in a large pot or skillet over medium heat.</li>
+            <li>Add garlic powder and smoked paprika, stirring 30 seconds to bloom the spices.</li>
+            <li>Add lima beans and corn, cooking 5–7 minutes until heated through.</li>
+            <li>Add cherry tomatoes and cook 3–5 minutes until they soften and burst.</li>
+            <li>Season with salt and pepper. Taste and adjust before serving.</li>
+          </ol>
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- 08 -->
+  <div class="recipe" id="pico">
+    <div class="recipe-header" onclick="toggleRecipe(this)">
+      <div class="recipe-header-left">
+        <span class="recipe-number">No. 08</span>
+        <h2>Pico de Gallo</h2>
+      </div>
+      <div class="recipe-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="recipe-body-wrap"><div class="recipe-body-inner">
+      <div class="recipe-body">
+        <div class="ingredients-col">
+          <p class="col-label">Ingredients</p>
+          <ul class="ing-list">
+            <li>12 medium tomatoes, diced ¼"</li>
+            <li>2 jalapeños, de-seeded and diced ⅛"</li>
+            <li>1 red onion, diced ¼"</li>
+            <li>1 Tbsp salt</li>
+            <li>¼ cup dried cilantro</li>
+          </ul>
+        </div>
+        <div class="instructions-col">
+          <p class="col-label">Method</p>
+          <ol class="steps">
+            <li>Dice tomatoes, jalapeños, and red onion to specified sizes.</li>
+            <li>Combine all ingredients in a large bowl.</li>
+            <li>Mix well and chill before serving.</li>
+          </ol>
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- 09 -->
+  <div class="recipe" id="pinto-beans">
+    <div class="recipe-header" onclick="toggleRecipe(this)">
+      <div class="recipe-header-left">
+        <span class="recipe-number">No. 09</span>
+        <h2>Pinto Beans</h2>
+      </div>
+      <div class="recipe-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="recipe-body-wrap"><div class="recipe-body-inner">
+      <div class="recipe-body single">
+        <div class="ingredients-col">
+          <p class="col-label">Ingredients</p>
+          <ul class="ing-list" style="columns:2;gap:24px;">
+            <li>2 #10 cans pinto beans</li>
+            <li>2 Tbsp black pepper</li>
+            <li>1 Tbsp salt</li>
+            <li>1 Tbsp dried cilantro</li>
+            <li>2 Tbsp cumin</li>
+            <li>2 cups milk</li>
+            <li>3 cups cheese</li>
+          </ul>
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- 10 -->
+  <div class="recipe" id="mustard-sauce">
+    <div class="recipe-header" onclick="toggleRecipe(this)">
+      <div class="recipe-header-left">
+        <span class="recipe-number">No. 10</span>
+        <h2>Mustard Sauce</h2>
+        <p class="recipe-note">Scaled 16× for 64 oz heavy cream</p>
+      </div>
+      <div class="recipe-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="recipe-body-wrap"><div class="recipe-body-inner">
+      <div class="recipe-body single">
+        <div class="ingredients-col">
+          <p class="col-label">Ingredients</p>
+          <ul class="ing-list" style="columns:2;gap:24px;">
+            <li>64 oz (½ gallon) heavy cream</li>
+            <li>1 cup Dijon mustard</li>
+            <li>1 cup whole grain mustard</li>
+            <li>⅔ cup tarragon, finely chopped</li>
+            <li>⅔ cup parsley, finely chopped</li>
+            <li>8 tsp salt</li>
+            <li>8 tsp pepper</li>
+            <li>1–2 cups water (adjust for consistency)</li>
+          </ul>
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- 11 -->
+  <div class="recipe" id="remoulade">
+    <div class="recipe-header" onclick="toggleRecipe(this)">
+      <div class="recipe-header-left">
+        <span class="recipe-number">No. 11</span>
+        <h2>Louisiana Remoulade</h2>
+        <p class="recipe-note">Scaled 8× for ½ gallon mayonnaise</p>
+      </div>
+      <div class="recipe-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="recipe-body-wrap"><div class="recipe-body-inner">
+      <div class="recipe-body single">
+        <div class="ingredients-col">
+          <p class="col-label">Ingredients</p>
+          <ul class="ing-list" style="columns:2;gap:24px;">
+            <li>½ gallon (8 cups) mayonnaise</li>
+            <li>1 cup Dijon mustard</li>
+            <li>½ cup lemon juice</li>
+            <li>½ cup flat-leaf parsley, chopped</li>
+            <li>½ cup Louisiana-style hot sauce</li>
+            <li>⅓ cup whole-grain mustard</li>
+            <li>16 cloves garlic, minced</li>
+            <li>⅓ cup capers, roughly chopped</li>
+            <li>8 tsp Worcestershire sauce</li>
+            <li>8 tsp mild paprika</li>
+            <li>8 scallions, finely chopped</li>
+            <li>2 tsp kosher salt</li>
+            <li>1 tsp cayenne pepper</li>
+          </ul>
+        </div>
+        <div class="instructions-col">
+          <p class="col-label">Method</p>
+          <ol class="steps">
+            <li>Combine all ingredients in a large bowl.</li>
+            <li>Mix thoroughly until fully incorporated.</li>
+            <li>Chill at least 1 hour before serving to let flavors develop.</li>
+          </ol>
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- 12 -->
+  <div class="recipe" id="taco-seasoning">
+    <div class="recipe-header" onclick="toggleRecipe(this)">
+      <div class="recipe-header-left">
+        <span class="recipe-number">No. 12</span>
+        <h2>Taco Seasoning</h2>
+        <p class="recipe-note">4 oz batch · 1 oz per 5 lbs meat</p>
+      </div>
+      <div class="recipe-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+    </div>
+    <div class="recipe-body-wrap"><div class="recipe-body-inner">
+      <div class="recipe-body single">
+        <div class="ingredients-col">
+          <p class="col-label">Ingredients</p>
+          <ul class="ing-list" style="columns:2;gap:24px;">
+            <li>4 Tbsp chili powder</li>
+            <li>1 tsp garlic powder</li>
+            <li>1 tsp onion powder</li>
+            <li>1 tsp crushed red pepper flakes</li>
+            <li>1 tsp dried oregano</li>
+            <li>2 tsp paprika</li>
+            <li>2 Tbsp ground cumin</li>
+            <li>4 tsp sea salt</li>
+            <li>4 tsp black pepper</li>
+          </ul>
+        </div>
+        <div class="instructions-col">
+          <p class="col-label">Method</p>
+          <ol class="steps">
+            <li>Combine all ingredients and mix well.</li>
+            <li>Store in an airtight container.</li>
+            <li>Use 1 oz of seasoning per 5 lbs of meat.</li>
+          </ol>
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+</div>
+
+<footer>
+  <span class="footer-ornament">✦</span>
+  James' Cookbook
+</footer>
+
+<script>
+  function toggleRecipe(header) {
+    header.closest('.recipe').classList.toggle('open');
+  }
+</script>
+
+</body>
+</html>
